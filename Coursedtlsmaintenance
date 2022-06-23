@@ -1,0 +1,229 @@
+Summary of the usecase:
+#########################
+#- Course in Tuples having fixed list of course to be verified for adding marks for course
+#- Participant in List for check and add if not available
+#- Scores in Dictionary with 3 dimension for addition
+#- __init__ definition is used to use the existing variables based on different input
+#- for loop used for Tuple check
+#- Get functionality is used for dictionary check with None check too.
+#- Break is used in some loop
+#- Exception handling is done to check input marks for integer i.e.. Valueerror is handled
+#- High level flow
+#  a. We can add new participant if not exists.
+#  b. We can add scoremarks if it is not exists, and valid course as per Tuple course and valid marks
+#  c. Input are taken from user and Dictionary is formed for score marks and processed
+# Note: Currently initalized hard coded values are used to check INIT and only one input set is processed
+#  The various inputs and outputs are shown at the end:
+
+---------------------------------------------------------------------------------
+#Initialization based on the input category
+
+class data_maint:
+    def __init__(self, input_type='dummy'):
+        if input_type =='course':
+            self.course_tup = ('linux','hadoop','yarn','sqoop','hive')
+            print('Current course list in Tuple is ' + str(self.course_tup))
+        elif input_type == 'participant':
+            self.participant_lst = ['venkatesh','divya','irfan']
+        elif input_type == 'score':
+            self.score_dict = {'venkatesh':{'hadoop':50,'linux':50,'yarn':35,'sqoop':50,'hive':50}}
+
+#Routine to check Tuple list for course to insert marks for course
+    def course_tup_chk(self,coursedtl):
+        print('printing the course tuple detail')
+        print(self.course_tup)
+        chkcnt = 0
+        for i in range (len(self.course_tup)):
+            if self.course_tup[i] == coursedtl:
+                chkcnt=chkcnt + 1
+        return (chkcnt)
+
+#Routine to check Participant list for input participant addition
+    def participant_lst_chk(self,participantdtl):
+        print('************* Printing current participant list details **************')
+        print(self.participant_lst)
+        chkcnt = 0
+        for i  in range (0,len(self.participant_lst)-1):
+            if self.participant_lst[i] == participantdtl:
+                chkcnt=chkcnt + 1
+        return (chkcnt)
+
+#routine to check Score dictionary existence
+    def score_dict_chk(self,scoredtl):
+        print('*********** Printing current score dictionary details ***********')
+        print(self.score_dict)
+        chkcnt = 0
+        if self.score_dict.get(scoredtl,'NULL') == 'NULL':
+	        chkcnt = 0
+        else:
+	        chkcnt = 1
+        return (chkcnt)
+
+#Routine to add new participant
+    def participant_lst_add(self,newpart,chkexist):
+	    if chkexist == 1:
+	        print(newpart + ' already exist in participant list')
+	    else:
+	        print(newpart + ' not exist in participant list and will be added')
+	        self.participant_lst.append(newpart)
+	        print(' ********** After changes new participant list as below ***********')
+	        print(self.participant_lst)
+
+#routine to add new score details in dictionary which is of 3 dimension
+    def score_dict_add(self,newscorekey,newscoredtl,chkexist):
+	    if chkexist == 1:
+	        print(newscorekey + ' already exist in score dictionary')
+	    else:
+	        print(newscorekey + ' not exist in score dictionary and will be added')
+	        self.score_dict[newscorekey]=newscoredtl
+	    print('After changes new score dictionary as below')
+	    print(self.score_dict)
+
+----------------------------------------------------------------------------------------------------
+#Loading the classes
+from we39_batch_maintenance.all_routines import all_classes
+
+#Loading the object for initialization depends on the category
+chktup_obj=all_classes.data_maint('course')
+chklst_obj=all_classes.data_maint('participant')
+chkdict_obj=all_classes.data_maint('score')
+
+#Using loaded objects methods/functions are called for checking/adding participant/score
+addlst_obj=all_classes.data_maint('participant')
+adddict_obj=data_maint=all_classes.data_maint('score')
+
+#Getting the input participant details and list of score details
+_in_participant = input ('Enter participant details added if not exist : ')
+_in_scoredtlscnt = int(input ('Enter number of course details for score :'))
+_in_scoredetls={}
+for i in range(_in_scoredtlscnt):
+    keys = input ('Enter the course for mark  :')
+    marks = input ( 'Enter the marks for above course :')
+    _in_scoredetls[keys]= marks
+print('Score dails dictionary drived ' + str(_in_scoredetls))
+_in_scorecandidate = _in_participant
+
+#Check for the participant list and add if not exist
+chkexist=0
+chkexist=chklst_obj.participant_lst_chk(_in_participant)
+addlst_obj.participant_lst_add(_in_participant,chkexist)
+
+chkexist=0
+chknotindictkey=0
+chkexist=chkdict_obj.score_dict_chk(_in_scorecandidate)
+
+#Check whether the input marks course is part of Tuple course entry
+if chkexist==0:
+    for key in _in_scoredetls:
+        chknotindictkey= (chktup_obj.course_tup_chk(key))
+        if chknotindictkey == 0:
+            print (key + ' not in the Course tuple list and score cannot be added')
+            break
+
+#Check Totalmarks and also check for integer marks details and through exception and handle it
+Totalmarks=0
+if chknotindictkey != 0:
+    try:
+        for key in _in_scoredetls:
+            Totalmarks = Totalmarks + int(_in_scoredetls[key])
+    except ValueError:
+            print('Not able to calculate total market since score key not integer ' + _in_scoredetls[key])
+    else:
+        print(str(Totalmarks) + ' is the total mark' )
+#Add to score details if it is valid one and valid mark
+        adddict_obj.score_dict_add(_in_scorecandidate,_in_scoredetls,chkexist)
+
+--------------------------------------------------------------------------------------------------------------
+Input & outputs given:
+###########################
+
+current course list in Tuple is ('linux', 'hadoop', 'yarn', 'sqoop', 'hive')
+Enter participant details added if not exist : Nimalesh
+Enter number of course details for score :3
+Enter the course for mark  :hadoo
+Enter the marks for above course :30
+Enter the course for mark  :hive
+Enter the marks for above course :20
+Enter the course for mark  :sqoo
+Enter the marks for above course :10
+Score dails dictionary drived {'hadoo': '30', 'hive': '20', 'sqoo': '10'}
+************* Printing current participant list details **************
+['venkatesh', 'divya', 'irfan']
+Nimalesh not exist in participant list and will be added
+ ********** After changes new participant list as below ***********
+['venkatesh', 'divya', 'irfan', 'Nimalesh']
+*********** Printing current score dictionary details ***********
+{'venkatesh': {'hadoop': 50, 'linux': 50, 'yarn': 35, 'sqoop': 50, 'hive': 50}}
+printing the course tuple detail
+('linux', 'hadoop', 'yarn', 'sqoop', 'hive')
+hadoo not in the Course tuple list and score cannot be added
+
+Process finished with exit code 0
+---------------------------------------------------------------------
+Current course list in Tuple is ('linux', 'hadoop', 'yarn', 'sqoop', 'hive')
+Enter participant details added if not exist : nim
+Enter number of course details for score :1
+Enter the course for mark  :hadoop
+Enter the marks for above course :a3
+Score dails dictionary drived {'hadoop': 'a3'}
+************* Printing current participant list details **************
+['venkatesh', 'divya', 'irfan']
+nim not exist in participant list and will be added
+ ********** After changes new participant list as below ***********
+['venkatesh', 'divya', 'irfan', 'nim']
+*********** Printing current score dictionary details ***********
+{'venkatesh': {'hadoop': 50, 'linux': 50, 'yarn': 35, 'sqoop': 50, 'hive': 50}}
+printing the course tuple detail
+('linux', 'hadoop', 'yarn', 'sqoop', 'hive')
+Not able to calculate total market since score key not integer a3
+
+Process finished with exit code 0
+---------------------------------------------------------------------------
+
+Current course list in Tuple is ('linux', 'hadoop', 'yarn', 'sqoop', 'hive')
+Enter participant details added if not exist : Nimal
+Enter number of course details for score :2
+Enter the course for mark  :sqoop
+Enter the marks for above course :30
+Enter the course for mark  :hive
+Enter the marks for above course :30
+Score dails dictionary drived {'sqoop': '30', 'hive': '30'}
+************* Printing current participant list details **************
+['venkatesh', 'divya', 'irfan']
+Nimal not exist in participant list and will be added
+ ********** After changes new participant list as below ***********
+['venkatesh', 'divya', 'irfan', 'Nimal']
+*********** Printing current score dictionary details ***********
+{'venkatesh': {'hadoop': 50, 'linux': 50, 'yarn': 35, 'sqoop': 50, 'hive': 50}}
+printing the course tuple detail
+('linux', 'hadoop', 'yarn', 'sqoop', 'hive')
+printing the course tuple detail
+('linux', 'hadoop', 'yarn', 'sqoop', 'hive')
+60 is the total mark
+Nimal not exist in score dictionary and will be added
+After changes new score dictionary as below
+{'venkatesh': {'hadoop': 50, 'linux': 50, 'yarn': 35, 'sqoop': 50, 'hive': 50}, 'Nimal': {'sqoop': '30', 'hive': '30'}}
+
+Process finished with exit code 0
+----------------------------------------------------------------------
+Current course list in Tuple is ('linux', 'hadoop', 'yarn', 'sqoop', 'hive')
+Enter participant details added if not exist : venkatesh
+Enter number of course details for score :1
+Enter the course for mark  :sqoop
+Enter the marks for above course :30
+Score dails dictionary drived {'sqoop': '30'}
+************* Printing current participant list details **************
+['venkatesh', 'divya', 'irfan']
+venkatesh already exist in participant list
+*********** Printing current score dictionary details ***********
+{'venkatesh': {'hadoop': 50, 'linux': 50, 'yarn': 35, 'sqoop': 50, 'hive': 50}}
+
+Process finished with exit code 0
+
+
+
+
+
+
+
+
